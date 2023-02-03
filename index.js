@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set("view-engine", ejs);
 
 class financier {
   constructor(name, history) {
@@ -78,6 +79,19 @@ let data_fin = [
     ],
   },
 ];
+
+function randomize_data(data_fin) {
+  for (let i = 0; i < data_fin.length; i++) {
+    for (let j = 0; j < data_fin[i].history.length; j++) {
+      let rand_no = Math.floor(Math.random() * 900) + 300;
+      data_fin[i].history[j][1] = rand_no;
+      console.log(rand_no);
+    }
+  }
+}
+
+randomize_data(data_fin);
+
 function make_financier(data_fin) {
   for (let i = 0; i < data_fin.length; i++) {
     let fin = new financier(data_fin[i].name, data_fin[i].history);
@@ -102,8 +116,6 @@ function sort_financiers(financiers, customer) {
   return differences;
 }
 
-app.set("view-engine", ejs);
-
 app.get("/", (req, res) => {
   res.render(path.join(__dirname, "/index.ejs"));
 });
@@ -113,8 +125,7 @@ app.post("/sort", (req, res) => {
   console.log(cibil_score);
   let new_customer = new customer(name, cibil_score);
   let matched_fin = sort_financiers(financiers, new_customer);
-  //    let matched_fin=sort_financiers(financ    iers,new_customer);
-  console.log(matched_fin.name);
+  console.log(matched_fin[0].name);
   res.render(path.join(__dirname, "/result.ejs"), { financier: matched_fin });
 });
 
